@@ -1,75 +1,124 @@
-# CarDekho AI Shortlist Builder - Next.js Frontend Client
+# AI Shortlist Builder
 
-This repository houses the frontend Next.js (App Router), TypeScript, and TailwindCSS application for the **AI Shortlist Builder** web app.
+## What did you build and why? What did you deliberately cut?
 
-It is carefully crafted to mimic the signature look and feel of **CarDekho.com**, utilizing premium aesthetics, smooth transitions, and high-fidelity explainability metrics to elevate buyer confidence.
+AI Shortlist Builder helps users go from:
 
----
+> "I don't know what car to buy"
 
-## 🎨 Design Theme & Core Visual Features
+to
 
-1. **Cardekho Brand Aesthetics**:
-   - Primary Brand Color: Vibrant Red (`#F52F32`) for active selections and core CTAs.
-   - Background Elements: Clean neutral off-white background (`#F8F9FA`) with pure-white (`#FFFFFF`) card panels.
-   - Typography: Clean, responsive modern sans-serif.
+> "These are the 3 cars I should seriously consider."
 
-2. **SVG Animated Radial Match Score Meter**:
-   - Highlights the match score of recommended vehicles inside a custom, dynamic SVG progress ring. It animates on loading and color-codes: emerald (`>=90%`), amber (`80-89%`), or blue (`<80%`).
-
-3. **Step-by-Step Gamified Survey**:
-   - Organizes the 6 core questions (Budget, Family Size, Usage, Fuel, Body, Priority) into 4 highly intuitive, gamified stages to prevent decision fatigue. Uses custom vector icons (`lucide-react`) to represent options.
-
-4. **Pulsating loading skeletons**:
-   - Renders a complete matching wireframe skeleton with smooth CSS pulse effects (matching recommended card sizes, overall reasoning bullet blocks, and rejected boxes) while waiting for the LLM. It rotates dynamic messages to keep the user engaged.
-
-5. **Grader Status Bar**:
-   - An elegant header badge that dynamically displays system connection health, the database mode (Supabase Cloud vs Offline In-Memory Fallback), and the active AI engine (Claude vs OpenAI vs Heuristics). Excellent for immediate local verification!
+Users answer a few questions about their budget, usage, family size, fuel preference, and priorities. The system then generates a personalized shortlist with explanations, tradeoffs, and reasons why certain cars were selected over others.
 
 ---
 
-## 📂 Folder Layout
+## Tech Stack
 
-```text
-cardekho_ui/
-├── app/
-│   ├── layout.tsx         # Next.js global layout wrapper
-│   ├── page.tsx           # Multi-state coordinator (Hero, Form, Loading, Results)
-│   └── globals.css        # Tailwind 4 custom styles, keyframes & animations
-├── components/
-│   ├── QuestionForm.tsx   # Interactive questionnaire multi-step wizard
-│   ├── RecommendationCard.tsx # Highlights Match Score meter, why it fits & tradeoffs
-│   ├── ReasoningSection.tsx # AI reasoning bullet points
-│   └── RejectedCars.tsx   # Explainability-focused rejected alternatives panel
-├── services/
-│   └── api.ts             # REST client with automatic timeout-retries
-├── types/
-│   └── index.ts           # Shared TypeScript interfaces
-├── package.json
-└── tsconfig.json
-```
+### Frontend
 
----
+* Next.js 15
+* TypeScript
+* Tailwind CSS
+* ShadCN UI
 
-## 🛠️ Environment Configurations
+### Backend
 
-Create a `.env` file in the root of this folder. You can copy the contents of `.env.example`:
+* Node.js
+* Express
 
-```bash
-# Absolute URL pointing to the Express REST API backend server (defaults to port 5001)
-NEXT_PUBLIC_API_URL=http://localhost:5001/api
-```
+### Database
+
+* Supabase (PostgreSQL)
+
+### AI
+
+* Gemini API
 
 ---
 
-## 🚀 Running the Client
+## What I Deliberately Cut
 
-### 1. Install Dependencies
+To keep the scope focused, I intentionally did not build:
+
+* Authentication
+* User accounts
+* Saved searches
+* Chat interface
+* Vehicle comparison pages
+* Dealer integrations
+
+The goal was to build the shortest path from user preferences to a confident shortlist.
+
+---
+
+## AI Usage
+
+I used AI tools to speed up:
+
+* UI scaffolding
+* Boilerplate code
+* Type definitions
+* Prompt iteration
+* Documentation
+
+The product design, recommendation flow, data model, and AI orchestration logic were designed manually.
+
+---
+
+## Where AI Helped Most
+
+AI was especially useful for generating repetitive code and accelerating UI development, allowing me to focus more on product decisions and recommendation quality.
+
+---
+
+## Where AI Got In The Way
+
+AI often suggested more complexity than needed (agents, RAG, vector databases, etc.). For this assignment, keeping the solution simple was usually the better choice.
+
+---
+
+## If I Had 4 More Hours
+
+I would add:
+
+* Follow-up questions to refine recommendations
+* Side by side car comparison
+* Better explainability and scoring
+* Real user review summaries
+* Save and revisit previous searches
+
+---
+
+## Running Locally
+
+### Frontend
+
 ```bash
 npm install
-```
-
-### 2. Boot up Development Server
-```bash
 npm run dev
 ```
-The application will boot and compile. Open **`http://localhost:3000`** in your browser to evaluate!
+
+### Backend
+
+```bash
+npm install
+npm run dev
+```
+
+Configure the following environment variables:
+
+```env
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+GEMINI_API_KEY=
+```
+
+---
+
+## Key Takeaway
+
+This project is not a car search engine.
+
+It's a decision-support tool designed to help users confidently narrow down thousands of options into a shortlist they can actually act on.
