@@ -146,7 +146,7 @@ export default function Home() {
       'Filtering Indian car database for matches...',
       'Reviewing fuel options and budget boundaries...',
       'Evaluating active safety ratings and mileage figures...',
-      'Claude AI is generating personalized tradeoffs...',
+      'Candor AI is generating personalized tradeoffs...',
       'Formulating contrastive rejection reasons...'
     ];
     let msgIndex = 0;
