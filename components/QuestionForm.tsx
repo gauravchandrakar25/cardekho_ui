@@ -6,7 +6,6 @@ import {
   IndianRupee, 
   Users, 
   Car, 
-  Fuel, 
   Zap, 
   ShieldAlert, 
   Milestone, 
@@ -101,41 +100,40 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
   ];
 
   const fuelOptions = [
-    { label: 'Petrol', desc: 'Refined performance', icon: Fuel },
-    { label: 'Diesel', desc: 'Torque & highway efficiency', icon: Fuel },
-    { label: 'CNG', desc: 'Ultra-low commuter running cost', icon: Fuel },
-    { label: 'EV', desc: 'Zero emissions & modern tech', icon: Zap },
-    { label: 'No Preference', desc: 'Open to any fuel type', icon: Car }
+    { label: 'Petrol', desc: 'Refined performance' },
+    { label: 'Diesel', desc: 'Torque & highway efficiency' },
+    { label: 'CNG', desc: 'Ultra-low commuter running cost' },
+    { label: 'EV', desc: 'Zero emissions & modern tech' },
+    { label: 'No Preference', desc: 'Open to any fuel type' }
   ];
 
   const bodyOptions = [
-    { label: 'Hatchback', desc: 'Compact & highly agile', icon: Car },
-    { label: 'SUV', desc: 'Tall view & high ground clearance', icon: Car },
-    { label: 'Sedan', desc: 'Elegant looks & three-box comfort', icon: Car },
-    { label: 'MPV', desc: 'Multi-seater family carrier', icon: Car },
-    { label: 'No Preference', desc: 'Open to all styling body types', icon: Car }
+    { label: 'Hatchback', desc: 'Compact & highly agile' },
+    { label: 'SUV', desc: 'Tall view & high ground clearance' },
+    { label: 'Sedan', desc: 'Elegant looks & three-box comfort' },
+    { label: 'MPV', desc: 'Multi-seater family carrier' },
+    { label: 'No Preference', desc: 'Open to all styling body types' }
   ];
 
   const priorityOptions = [
-    { label: 'Mileage', desc: 'Maximize kilometers per liter', icon: Zap, color: 'text-emerald-500 bg-emerald-50' },
-    { label: 'Comfort', desc: 'Spacious seats & smooth suspensions', icon: HeartHandshake, color: 'text-blue-500 bg-blue-50' },
-    { label: 'Safety', desc: 'High crash ratings & solid build', icon: ShieldAlert, color: 'text-rose-500 bg-rose-50' },
-    { label: 'Performance', desc: 'High power & sporty acceleration', icon: Zap, color: 'text-amber-500 bg-amber-50' },
-    { label: 'Low Maintenance', desc: 'Hassle-free service & cheap spares', icon: Wrench, color: 'text-teal-500 bg-teal-50' },
-    { label: 'Resale Value', desc: 'Strong market value retention', icon: LineChart, color: 'text-purple-500 bg-purple-50' }
+    { label: 'Mileage', desc: 'Maximize kilometers per liter', icon: Zap, color: 'text-emerald-500 bg-emerald-500/10 border border-emerald-500/20' },
+    { label: 'Comfort', desc: 'Spacious seats & smooth suspensions', icon: HeartHandshake, color: 'text-zinc-100 bg-zinc-900 border border-zinc-800' },
+    { label: 'Safety', desc: 'High crash ratings & solid build', icon: ShieldAlert, color: 'text-rose-500 bg-rose-500/10 border border-rose-500/20' },
+    { label: 'Performance', desc: 'High power & sporty acceleration', icon: Zap, color: 'text-amber-500 bg-amber-500/10 border border-amber-500/20' },
+    { label: 'Resale Value', desc: 'Strong market value retention', icon: LineChart, color: 'text-zinc-100 bg-zinc-900 border border-zinc-800' }
   ];
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-white rounded-2xl border border-brand-border p-6 md:p-8 shadow-sm">
+    <div className="w-full max-w-4xl mx-auto bg-zinc-900/40 backdrop-blur-md rounded-2xl border border-zinc-800/80 p-6 md:p-10 shadow-2xl relative animate-scale-in">
       {/* Progress Header */}
-      <div className="mb-8">
-        <div className="flex justify-between text-xs font-semibold text-brand-gray uppercase tracking-wider mb-2">
+      <div className="mb-8 space-y-2">
+        <div className="flex justify-between text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono">
           <span>Step {step} of {totalSteps}</span>
           <span>{Math.round(((step - 1) / totalSteps) * 100)}% Completed</span>
         </div>
-        <div className="w-full h-2 bg-brand-border rounded-full overflow-hidden">
+        <div className="w-full h-1.5 bg-zinc-950 rounded-full overflow-hidden border border-zinc-850/50">
           <div 
-            className="h-full bg-brand-red transition-all duration-500 ease-out"
+            className="h-full bg-brand-blue transition-all duration-500 ease-out shadow-[0_0_8px_rgba(16,185,129,0.3)]"
             style={{ width: `${(step / totalSteps) * 100}%` }}
           />
         </div>
@@ -144,36 +142,41 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
       <form onSubmit={handleSubmit}>
         {/* Step 1: Budget */}
         {step === 1 && (
-          <div className="animate-fade-in-up">
-            <h2 className="text-xl md:text-2xl font-bold text-brand-dark mb-2">What is your target budget?</h2>
-            <p className="text-sm text-brand-gray mb-6">Budget is the baseline of our search. Select the pricing boundaries that feel most comfortable.</p>
+          <div className="animate-fade-in-up space-y-6">
+            <div>
+              <h2 className="text-xl md:text-2xl font-display font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-2">What is your target budget?</h2>
+              <p className="text-xs md:text-sm text-zinc-400 font-sans font-normal">Budget is the baseline of our search. Select the pricing boundaries that feel most comfortable.</p>
+            </div>
             
-            <div className="space-y-3">
-              {budgetOptions.map((opt) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {budgetOptions.map((opt, idx) => {
                 const isSelected = preferences.budget === opt.label;
+                const isLast = idx === budgetOptions.length - 1;
                 return (
                   <button
                     key={opt.label}
                     type="button"
                     onClick={() => updatePreference('budget', opt.label)}
-                    className={`w-full flex items-center justify-between text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                    className={`flex items-center justify-between text-left p-4.5 rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer ${
+                      isLast ? 'md:col-span-2' : ''
+                    } ${
                       isSelected 
-                        ? 'border-brand-red bg-brand-red-light' 
-                        : 'border-brand-border hover:border-brand-gray bg-white'
+                        ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
+                        : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${isSelected ? 'bg-brand-red text-white' : 'bg-gray-100 text-brand-gray'}`}>
+                    <div className="flex items-center gap-3.5">
+                      <div className={`p-2.5 rounded-lg transition-colors duration-300 ${isSelected ? 'bg-brand-blue text-zinc-950' : 'bg-zinc-900 border border-zinc-800 text-zinc-400'}`}>
                         <IndianRupee className="w-5 h-5" />
                       </div>
                       <div>
-                        <span className="block font-semibold text-brand-dark text-base">{opt.label}</span>
-                        <span className="block text-xs text-brand-gray mt-0.5">{opt.desc}</span>
+                        <span className="block font-display font-semibold text-zinc-100 text-sm md:text-base">{opt.label}</span>
+                        <span className="block text-[11px] text-zinc-400 mt-0.5 font-normal leading-relaxed">{opt.desc}</span>
                       </div>
                     </div>
                     {isSelected && (
-                      <div className="w-6 h-6 rounded-full bg-brand-red text-white flex items-center justify-center">
-                        <Check className="w-4 h-4" />
+                      <div className="w-6 h-6 rounded-full bg-brand-blue text-zinc-950 flex items-center justify-center shrink-0">
+                        <Check className="w-3.5 h-3.5" strokeWidth={3} />
                       </div>
                     )}
                   </button>
@@ -187,9 +190,9 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
         {step === 2 && (
           <div className="animate-fade-in-up space-y-6">
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-brand-dark mb-2">How many people ride together?</h2>
-              <p className="text-sm text-brand-gray mb-4">This helps determine cabin space requirements (e.g. 5-seaters vs 7-seaters).</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <h2 className="text-xl md:text-2xl font-display font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-2">How many people ride together?</h2>
+              <p className="text-xs md:text-sm text-zinc-400 font-sans font-normal mb-4">This helps determine cabin space requirements (e.g. 5-seaters vs 7-seaters).</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {familyOptions.map((opt) => {
                   const isSelected = preferences.familySize === opt.label;
                   return (
@@ -197,15 +200,15 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                       key={opt.label}
                       type="button"
                       onClick={() => updatePreference('familySize', opt.label)}
-                      className={`text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                      className={`text-left p-5 rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer ${
                         isSelected 
-                          ? 'border-brand-red bg-brand-red-light' 
-                          : 'border-brand-border hover:border-brand-gray bg-white'
+                          ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
+                          : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
                       }`}
                     >
-                      <opt.icon className={`w-6 h-6 mb-2 ${isSelected ? 'text-brand-red' : 'text-brand-gray'}`} />
-                      <span className="block font-semibold text-brand-dark">{opt.label} Persons</span>
-                      <span className="block text-xs text-brand-gray mt-1">{opt.desc}</span>
+                      <opt.icon className={`w-6 h-6 mb-3 transition-colors duration-300 ${isSelected ? 'text-brand-blue' : 'text-zinc-400'}`} />
+                      <span className="block font-display font-semibold text-zinc-100 text-sm md:text-base">{opt.label} Persons</span>
+                      <span className="block text-[11px] text-zinc-400 mt-1 font-normal leading-relaxed">{opt.desc}</span>
                     </button>
                   );
                 })}
@@ -213,9 +216,9 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
             </div>
 
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-brand-dark mb-2">Where will you drive the most?</h2>
-              <p className="text-sm text-brand-gray mb-4">This impacts priorities like automatic transmission preference and optimal engine sizing.</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <h2 className="text-xl md:text-2xl font-display font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-2">Where will you drive the most?</h2>
+              <p className="text-xs md:text-sm text-zinc-400 font-sans font-normal mb-4">This impacts priorities like automatic transmission preference and optimal engine sizing.</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {usageOptions.map((opt) => {
                   const isSelected = preferences.primaryUsage === opt.label;
                   return (
@@ -223,15 +226,15 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                       key={opt.label}
                       type="button"
                       onClick={() => updatePreference('primaryUsage', opt.label)}
-                      className={`text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                      className={`text-left p-5 rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer ${
                         isSelected 
-                          ? 'border-brand-red bg-brand-red-light' 
-                          : 'border-brand-border hover:border-brand-gray bg-white'
+                          ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
+                          : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
                       }`}
                     >
-                      <opt.icon className={`w-6 h-6 mb-2 ${isSelected ? 'text-brand-red' : 'text-brand-gray'}`} />
-                      <span className="block font-semibold text-brand-dark">{opt.label}</span>
-                      <span className="block text-xs text-brand-gray mt-1">{opt.desc}</span>
+                      <opt.icon className={`w-6 h-6 mb-3 transition-colors duration-300 ${isSelected ? 'text-brand-blue' : 'text-zinc-400'}`} />
+                      <span className="block font-display font-semibold text-zinc-100 text-sm md:text-base">{opt.label}</span>
+                      <span className="block text-[11px] text-zinc-400 mt-1 font-normal leading-relaxed">{opt.desc}</span>
                     </button>
                   );
                 })}
@@ -244,9 +247,9 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
         {step === 3 && (
           <div className="animate-fade-in-up space-y-6">
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-brand-dark mb-2">What is your fuel preference?</h2>
-              <p className="text-sm text-brand-gray mb-4">Decide between running costs (CNG/EV) vs absolute convenience (Petrol/Diesel).</p>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+              <h2 className="text-xl md:text-2xl font-display font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-2">What is your fuel preference?</h2>
+              <p className="text-xs md:text-sm text-zinc-400 font-sans font-normal mb-4">Decide between running costs (CNG/EV) vs absolute convenience (Petrol/Diesel).</p>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                 {fuelOptions.map((opt) => {
                   const isSelected = preferences.fuelPreference === opt.label;
                   return (
@@ -254,14 +257,14 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                       key={opt.label}
                       type="button"
                       onClick={() => updatePreference('fuelPreference', opt.label)}
-                      className={`text-center p-3 rounded-xl border-2 transition-all duration-200 flex flex-col items-center justify-center ${
+                      className={`text-center p-4 rounded-xl border transition-all duration-300 flex flex-col items-center justify-center hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer min-h-[80px] ${
                         isSelected 
-                          ? 'border-brand-red bg-brand-red-light' 
-                          : 'border-brand-border hover:border-brand-gray bg-white'
+                          ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
+                          : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
                       }`}
                     >
-                      <opt.icon className={`w-5 h-5 mb-1.5 ${isSelected ? 'text-brand-red' : 'text-brand-gray'}`} />
-                      <span className="font-semibold text-brand-dark text-xs">{opt.label}</span>
+                      <span className="font-display font-semibold text-zinc-100 text-xs md:text-sm">{opt.label}</span>
+                      <span className="text-[9px] text-zinc-400 mt-1 leading-normal hidden md:block">{opt.desc.split(' ')[0]}</span>
                     </button>
                   );
                 })}
@@ -269,9 +272,9 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
             </div>
 
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-brand-dark mb-2">What body style do you prefer?</h2>
-              <p className="text-sm text-brand-gray mb-4">Select what design style excites you or select No Preference.</p>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+              <h2 className="text-xl md:text-2xl font-display font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-2">What body style do you prefer?</h2>
+              <p className="text-xs md:text-sm text-zinc-400 font-sans font-normal mb-4">Select what design style excites you or select No Preference.</p>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                 {bodyOptions.map((opt) => {
                   const isSelected = preferences.bodyType === opt.label;
                   return (
@@ -279,14 +282,14 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                       key={opt.label}
                       type="button"
                       onClick={() => updatePreference('bodyType', opt.label)}
-                      className={`text-center p-3 rounded-xl border-2 transition-all duration-200 flex flex-col items-center justify-center ${
+                      className={`text-center p-4 rounded-xl border transition-all duration-300 flex flex-col items-center justify-center hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer min-h-[80px] ${
                         isSelected 
-                          ? 'border-brand-red bg-brand-red-light' 
-                          : 'border-brand-border hover:border-brand-gray bg-white'
+                          ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
+                          : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
                       }`}
                     >
-                      <opt.icon className={`w-5 h-5 mb-1.5 ${isSelected ? 'text-brand-red' : 'text-brand-gray'}`} />
-                      <span className="font-semibold text-brand-dark text-xs">{opt.label}</span>
+                      <span className="font-display font-semibold text-zinc-100 text-xs md:text-sm">{opt.label}</span>
+                      <span className="text-[9px] text-zinc-400 mt-1 leading-normal hidden md:block">{opt.desc.split(' ')[0]}</span>
                     </button>
                   );
                 })}
@@ -297,11 +300,13 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
 
         {/* Step 4: Top Priority */}
         {step === 4 && (
-          <div className="animate-fade-in-up">
-            <h2 className="text-xl md:text-2xl font-bold text-brand-dark mb-2">What is your absolute top priority?</h2>
-            <p className="text-sm text-brand-gray mb-6">Choose the **single most important driver** for your decision. We will use this to rank and explain matches.</p>
+          <div className="animate-fade-in-up space-y-6">
+            <div>
+              <h2 className="text-xl md:text-2xl font-display font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-2">What is your absolute top priority?</h2>
+              <p className="text-xs md:text-sm text-zinc-400 font-sans font-normal">Choose the **single most important driver** for your decision. We will use this to rank and explain matches.</p>
+            </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {priorityOptions.map((opt) => {
                 const isSelected = preferences.topPriority === opt.label;
                 return (
@@ -309,22 +314,22 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                     key={opt.label}
                     type="button"
                     onClick={() => updatePreference('topPriority', opt.label)}
-                    className={`flex items-start text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                    className={`flex items-start text-left p-4.5 rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer ${
                       isSelected 
-                        ? 'border-brand-red bg-brand-red-light shadow-sm' 
-                        : 'border-brand-border hover:border-brand-gray bg-white'
+                        ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
+                        : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
                     }`}
                   >
-                    <div className={`p-2 rounded-lg mr-3 ${opt.color}`}>
+                    <div className={`p-2.5 rounded-lg mr-3.5 transition-colors duration-300 shrink-0 ${opt.color}`}>
                       <opt.icon className="w-5 h-5" />
                     </div>
-                    <div>
-                      <span className="block font-semibold text-brand-dark text-sm">{opt.label}</span>
-                      <span className="block text-xs text-brand-gray mt-0.5">{opt.desc}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="block font-display font-semibold text-zinc-100 text-sm md:text-base">{opt.label}</span>
+                      <span className="block text-[11px] text-zinc-400 mt-0.5 font-normal leading-relaxed">{opt.desc}</span>
                     </div>
                     {isSelected && (
-                      <div className="ml-auto w-5 h-5 rounded-full bg-brand-red text-white flex items-center justify-center shrink-0">
-                        <Check className="w-3 h-3" />
+                      <div className="ml-auto w-6 h-6 rounded-full bg-brand-blue text-zinc-950 flex items-center justify-center shrink-0">
+                        <Check className="w-3.5 h-3.5" strokeWidth={3} />
                       </div>
                     )}
                   </button>
@@ -336,20 +341,18 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
 
         {/* Error Alert Box */}
         {error && (
-          <div className="mt-4 p-3 bg-rose-50 border border-rose-100 rounded-lg text-rose-600 text-xs font-semibold animate-scale-in">
+          <div className="mt-4 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500 text-xs font-mono font-bold animate-scale-in flex items-center gap-1.5 shadow-xs">
             ⚠️ {error}
           </div>
         )}
 
         {/* Bottom Actions Panel */}
-        <div className="mt-8 pt-6 border-t border-brand-border flex items-center justify-between">
+        <div className="mt-8 pt-6 border-t border-zinc-800/60 flex items-center justify-between">
           <button
             type="button"
             onClick={handleBack}
-            className={`flex items-center gap-2 font-semibold text-sm px-4 py-2.5 rounded-lg border border-brand-border transition-all duration-200 ${
-              step === 1 
-                ? 'opacity-0 pointer-events-none' 
-                : 'text-brand-dark hover:bg-brand-bg cursor-pointer'
+            className={`btn-secondary flex items-center gap-2 hover:scale-[1.01] active:scale-[0.99] rounded-lg ${
+              step === 1 ? 'opacity-0 pointer-events-none' : ''
             }`}
           >
             <ArrowLeft className="w-4 h-4" /> Back
@@ -359,7 +362,7 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
             <button
               type="button"
               onClick={handleNext}
-              className="flex items-center gap-2 font-bold text-sm bg-brand-red hover:bg-brand-red-hover text-white px-5 py-2.5 rounded-lg shadow-sm transition-all duration-200 cursor-pointer"
+              className="btn-primary hover:scale-[1.01] active:scale-[0.99] flex items-center gap-2 text-xs md:text-sm px-5 py-2.5 rounded-lg font-bold"
             >
               Continue <ArrowRight className="w-4 h-4" />
             </button>
@@ -367,11 +370,11 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
             <button
               type="submit"
               disabled={isLoading}
-              className="flex items-center gap-2 font-bold text-sm bg-brand-red hover:bg-brand-red-hover disabled:bg-red-400 text-white px-6 py-2.5 rounded-lg shadow-sm transition-all duration-200 cursor-pointer"
+              className="btn-primary hover:scale-[1.01] active:scale-[0.99] flex items-center gap-2 text-xs md:text-sm px-6 py-2.5 rounded-lg font-bold disabled:bg-zinc-850 disabled:text-zinc-500 disabled:scale-100"
             >
               {isLoading ? (
                 <span className="flex items-center gap-1">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-zinc-950" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>

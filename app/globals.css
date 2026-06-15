@@ -1,38 +1,127 @@
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  /* CarDekho Brand Colors */
-  --brand-red: #F75E35;
-  --brand-red-hover: #E34A20;
-  --brand-red-light: #FFF1ED;
-  --brand-dark: #222222;
-  --brand-gray: #555555;
-  --brand-border: #E8ECEF;
-  --brand-bg: #F8F9FA;
+  /* Brand Accents - Candor (Emerald / Rose) */
+  --brand-blue: #10b981;       /* Candor Emerald */
+  --brand-blue-hover: #059669; 
+  --brand-blue-light: #064e3b; 
+  --brand-red: #f43f5e;        /* Candor Rose */
+  --brand-red-hover: #e11d48;  
+  --brand-red-light: #4c0519;  
+
+  /* Theme Tokens - Defaulting to Deep Onyx (Dark) */
+  --background: #09090b;       /* Onyx */
+  --foreground: #f4f4f5;       
+  --card-bg: #18181b;          /* Surface */
+  --card-border: #27272a;      /* Border */
+  --text-muted: #71717a;       /* Candor Mist */
   
   /* System Defaults */
-  --background: #F8F9FA;
-  --foreground: #222222;
+  --background-system: var(--background);
+  --foreground-system: var(--foreground);
 }
 
+.light {
+  /* Theme Tokens - Light Mode */
+  --background: #fafafa;       /* zinc-50 */
+  --foreground: #09090b;       /* zinc-950 */
+  --card-bg: #ffffff;          /* white */
+  --card-border: #e4e4e7;      /* zinc-200 */
+  --text-muted: #71717a;       /* zinc-500 */
+  
+  /* Adjust accents for light mode */
+  --brand-blue: #059669;       /* emerald-600 */
+  --brand-blue-hover: #047857; /* emerald-700 */
+  --brand-blue-light: #d1fae5; /* emerald-100 */
+  --brand-red: #e11d48;        /* rose-600 */
+  --brand-red-hover: #be123c;  /* rose-700 */
+  --brand-red-light: #ffe4e6;  /* rose-100 */
+}
+
+/* Light mode contrast & readability overrides for hardcoded dark classes */
+.light .text-zinc-100 {
+  color: #09090b !important;
+}
+.light .text-zinc-200 {
+  color: #18181b !important;
+}
+.light .text-zinc-300 {
+  color: #27272a !important;
+}
+.light .text-zinc-400 {
+  color: #4b5563 !important; /* gray-600 for WCAG AA label contrast on white */
+}
+.light .text-zinc-500 {
+  color: #6b7280 !important;
+}
+.light .dark\:text-zinc-100 {
+  color: #09090b !important;
+}
+.light .dark\:text-slate-100 {
+  color: #0f172a !important;
+}
+
+.light .bg-zinc-900 {
+  background-color: #f4f4f5 !important; /* light grey input/container background */
+}
+.light .bg-zinc-950 {
+  background-color: #fafafa !important; /* light grey content background */
+}
+.light .bg-zinc-950\/20 {
+  background-color: rgba(9, 9, 11, 0.05) !important;
+}
+.light .bg-zinc-950\/40 {
+  background-color: rgba(9, 9, 11, 0.08) !important;
+}
+.light .bg-zinc-900\/30 {
+  background-color: rgba(244, 244, 245, 0.8) !important;
+}
+.light .bg-zinc-900\/50 {
+  background-color: rgba(228, 228, 231, 0.5) !important;
+}
+
+.light .border-zinc-800 {
+  border-color: #e4e4e7 !important; /* light grey border */
+}
+
+.light option {
+  background-color: #ffffff !important;
+  color: #09090b !important;
+}
+
+
 @theme {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: 'Clash Display', 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-bg-main: var(--background);
+  --color-fg-main: var(--foreground);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-text-muted: var(--text-muted);
+  
   --color-brand-red: var(--brand-red);
   --color-brand-red-hover: var(--brand-red-hover);
   --color-brand-red-light: var(--brand-red-light);
-  --color-brand-dark: var(--brand-dark);
-  --color-brand-gray: var(--brand-gray);
-  --color-brand-border: var(--brand-border);
-  --color-brand-bg: var(--brand-bg);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-hover: var(--brand-blue-hover);
+  --color-brand-blue-light: var(--brand-blue-light);
   
-  --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-scale-in: scale-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  --animate-fade-in-up: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-scale-in: scale-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   --animate-progress-radial: progress-radial 1s ease-out forwards;
+  --animate-slide-in-right: slide-in-right 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -43,7 +132,7 @@
 @keyframes scale-in {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
   to {
     opacity: 1;
@@ -57,28 +146,161 @@
   }
 }
 
-/* Custom premium styles */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Base resets & styling overrides */
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Card hover scaling micro-animations */
-.cd-hover-card {
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+/* Visual Grid Backdrop Pattern */
+.grid-backdrop {
+  background-image: 
+    linear-gradient(rgba(16, 185, 129, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center center;
 }
 
-.cd-hover-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  border-color: var(--brand-red);
+.light .grid-backdrop {
+  background-image: 
+    linear-gradient(rgba(5, 150, 105, 0.01) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(5, 150, 105, 0.01) 1px, transparent 1px);
 }
 
-/* Glassmorphism subtle navigation header */
-.cd-glass-header {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--brand-border);
+/* Scroll indicator animation */
+@keyframes bounce-down {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
 }
+
+.animate-bounce-down {
+  animation: bounce-down 2s infinite ease-in-out;
+}
+
+/* Glassmorphism overlays */
+.glass-overlay {
+  background: rgba(9, 9, 11, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.light .glass-overlay {
+  background: rgba(250, 250, 250, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Bento Card Style */
+.bento-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem; /* rounded-xl (12px) */
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.bento-card:hover {
+  transform: scale(1.01);
+  background-color: rgba(39, 39, 42, 0.4);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  border-color: var(--brand-blue);
+}
+
+.light .bento-card:hover {
+  background-color: rgba(244, 244, 245, 0.6);
+  border-color: var(--brand-blue);
+}
+
+/* Button Classes */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem; /* rounded-md (6px) */
+  font-weight: 600;
+  font-size: 0.875rem;
+  background-color: var(--foreground);
+  color: var(--background);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: scale(1.01);
+}
+
+.btn-primary:active {
+  transform: scale(0.99);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem; /* rounded-md (6px) */
+  font-weight: 600;
+  font-size: 0.875rem;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--foreground);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(39, 39, 42, 0.4);
+  border-color: var(--card-border);
+  transform: scale(1.01);
+}
+
+.btn-secondary:active {
+  transform: scale(0.99);
+}
+
+/* Premium Narrative Glows */
+.narrative-glow {
+  position: relative;
+}
+
+.narrative-glow::before {
+  content: '';
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  width: 130%;
+  height: 130%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.04) 0%, rgba(16, 185, 129, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.light .narrative-glow::before {
+  background: radial-gradient(circle, rgba(5, 150, 105, 0.02) 0%, rgba(5, 150, 105, 0) 70%);
+}
+
+
+
