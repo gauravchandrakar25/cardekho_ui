@@ -1,32 +1,32 @@
-// Real-world, high-quality public image URLs for every car model in the database from Wikimedia Commons.
 export const CAR_IMAGE_MAP: Record<string, string> = {
-  'swift': 'https://upload.wikimedia.org/wikipedia/commons/e/ec/2018_Suzuki_Swift_SZ5_Boosterjet_SHVS_1.0_Front.jpg',
-  'tiago ev': 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Tata_Tiago_2020.jpg',
-  'i20': 'https://upload.wikimedia.org/wikipedia/commons/6/69/2021_Hyundai_i20_N_Line_%28BI3%3B_India%29_front_view.png',
-  'nexon': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Tata_Nexon_XM.jpg',
-  'nexon ev': 'https://upload.wikimedia.org/wikipedia/commons/0/08/Tata_Nexon_EV_in_Hyderabad_02.jpg',
-  'creta': 'https://upload.wikimedia.org/wikipedia/commons/6/65/Hyundai_Creta_India.jpg',
-  'seltos': 'https://upload.wikimedia.org/wikipedia/commons/7/7f/Kia_Seltos_SP2_PE_Snow_White_Pearl_%286%29_%28cropped%29.jpg',
-  'xuv700': 'https://upload.wikimedia.org/wikipedia/commons/3/30/Mahindra_XUV700_AX7_Luxury_Pack_2021.jpg',
-  'city': 'https://upload.wikimedia.org/wikipedia/commons/c/ca/2022_Honda_City_ZX_i-VTEC_%28India%29_front_view.jpg',
-  'verna': 'https://upload.wikimedia.org/wikipedia/commons/2/22/Hyundai_Verna_IV_facelift_001.jpg',
-  'dzire': 'https://upload.wikimedia.org/wikipedia/commons/b/b5/Maruti_Suzuki_Dzire_VXi_VVT.JPG',
-  'ertiga': 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Suzuki_Ertiga%2C_MPV_front_view.jpg',
-  'innova hycross': 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Toyota_Innova_Zenix_2.0_Q_Hybrid_2023.jpg',
-  'fortuner': 'https://upload.wikimedia.org/wikipedia/commons/7/77/Toyota_Fortuner_4x2_Legender_2022_%281%29.jpg',
-  'punch': 'https://upload.wikimedia.org/wikipedia/commons/0/04/Tata_Punch_Creative_2021.jpg',
-  'zs ev': 'https://upload.wikimedia.org/wikipedia/commons/c/c3/2022_MG_ZS_EV_Standard_Range_Excite_front.jpg',
-  '3 series gran limousine': 'https://upload.wikimedia.org/wikipedia/commons/c/cc/BMW_3_Series_Gran_Limousine_330Li_Luxury_Line_2021.jpg',
+  'swift': 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80',
+  'tiago ev': 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800&q=80',
+  'i20': 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=800&q=80',
+  'nexon': 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80',
+  'nexon ev': 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80',
+  'creta': 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80',
+  'seltos': 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80',
+  'xuv700': 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80',
+  'city': 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80',
+  'verna': 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80',
+  'dzire': 'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=800&q=80',
+  'ertiga': 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80',
+  'innova hycross': 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800&q=80',
+  'fortuner': 'https://images.unsplash.com/photo-1525609004556-c46c7d6cf0a3?auto=format&fit=crop&w=800&q=80',
+  'punch': 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80',
+  'zs ev': 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80',
+  '3 series gran limousine': 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80',
 };
+
 
 /**
  * Normalizes a car name and retrieves its corresponding real-world internet image URL.
  * Wraps the URL in images.weserv.nl proxy to bypass referer blocks and CORS policies.
  */
-export function getCarActualImage(carName: string): string {
-  let rawUrl = CAR_IMAGE_MAP['nexon'];
+export function getCarActualImage(carName: string, dbImage?: string | null): string {
+  let rawUrl = dbImage || CAR_IMAGE_MAP['nexon'];
   
-  if (carName) {
+  if (!dbImage && carName) {
     const normalized = carName.toLowerCase()
       .replace('tata ', '')
       .replace('maruti suzuki ', '')
@@ -60,7 +60,8 @@ export function getCarActualImage(carName: string): string {
 /**
  * Retrieves the direct raw image URL for a car name without any proxy layer.
  */
-export function getCarRawUrl(carName: string): string {
+export function getCarRawUrl(carName: string, dbImage?: string | null): string {
+  if (dbImage) return dbImage;
   if (!carName) return CAR_IMAGE_MAP['nexon'];
   
   const normalized = carName.toLowerCase()
@@ -87,3 +88,4 @@ export function getCarRawUrl(carName: string): string {
 
   return CAR_IMAGE_MAP['nexon'];
 }
+

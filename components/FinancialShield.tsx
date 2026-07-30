@@ -21,12 +21,18 @@ interface FinancialShieldProps {
   initialCarPriceLakhs?: number;
   carName?: string;
   onClose?: () => void;
+  initialDownPaymentLakhs?: number;
 }
 
-export default function FinancialShield({ initialCarPriceLakhs, carName, onClose }: FinancialShieldProps) {
+export default function FinancialShield({ initialCarPriceLakhs, carName, onClose, initialDownPaymentLakhs }: FinancialShieldProps) {
   const [monthlySalary, setMonthlySalary] = useState<number>(120000);
   const [monthlyFixedExpenses, setMonthlyFixedExpenses] = useState<number>(45000);
   const [carPriceLakhs, setCarPriceLakhs] = useState<number>(initialCarPriceLakhs || 12);
+  const [downPaymentLakhs, setDownPaymentLakhs] = useState<number>(
+    initialDownPaymentLakhs !== undefined 
+      ? initialDownPaymentLakhs 
+      : Number(((initialCarPriceLakhs || 12) * 0.20).toFixed(2))
+  );
   
   const [bankRates, setBankRates] = useState<BankRate[]>([
     { id: 'sbi', name: 'SBI Car Loan', rate: 8.75 },
@@ -57,12 +63,21 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
   const selectedBank = bankRates.find(b => b.id === selectedBankId) || bankRates[0];
   const interestRate = selectedBank ? selectedBank.rate : 8.75;
 
+  const handleCarPriceChange = (newPrice: number) => {
+    setCarPriceLakhs(newPrice);
+    if (downPaymentLakhs > newPrice) {
+      setDownPaymentLakhs(Number((newPrice * 0.20).toFixed(2)));
+    }
+  };
+
   const evaluateLocalAffordability = (): AffordabilityResult => {
     const tenureMonths = 48;
     const maxAllowedEMI = Math.round(monthlySalary * 0.10);
     
-    const downPaymentRequired = carPriceLakhs * 0.20;
-    const loanAmount = carPriceLakhs * 0.80;
+    const downPaymentRequired = carPriceLakhs * 0.20; // 20% benchmark
+    const safeDownPayment = Math.max(0, Math.min(carPriceLakhs, downPaymentLakhs));
+    const downPaymentPercent = carPriceLakhs > 0 ? (safeDownPayment / carPriceLakhs) * 100 : 0;
+    const loanAmount = Math.max(0, carPriceLakhs - safeDownPayment);
 
     const principal = loanAmount * 100000;
     const monthlyRate = (interestRate / 12) / 100;
@@ -84,9 +99,9 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
                      (Math.pow(1 + monthlyRate, tenureMonths) - 1);
       maxLoanAmount = (maxAllowedEMI / factor) / 100000;
     }
-    const maxCarPrice = maxLoanAmount / 0.80;
+    const maxCarPrice = maxLoanAmount + safeDownPayment;
 
-    const downPaymentMet = true;
+    const downPaymentMet = downPaymentPercent >= 19.99;
     const loanTenureMet = true;
     const emiLimitMet = actualCarEMI <= maxAllowedEMI;
     
@@ -98,17 +113,20 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
     let score = 95;
     const emiRatio = actualCarEMI / maxAllowedEMI;
 
-    if (emiRatio <= 1.0 && cashflowHealthy) {
+    if (emiRatio <= 1.0 && cashflowHealthy && downPaymentMet) {
       status = 'Safe';
       score = Math.round(100 - (15 * emiRatio));
     } else if (emiRatio <= 1.5 && totalFixedCommitmentPercent <= 85) {
       status = 'Stretching';
       const stretchingProgress = (emiRatio - 1.0) / 0.5;
-      score = Math.round(84 - (34 * stretchingProgress));
+      score = Math.round(84 - (34 * Math.max(0, stretchingProgress)));
+      if (!downPaymentMet) {
+        score = Math.max(50, score - 10);
+      }
     } else {
       status = 'Unsafe';
       const unsafeProgress = Math.min((emiRatio - 1.5) / 1.0, 1);
-      score = Math.round(49 - (39 * unsafeProgress));
+      score = Math.round(49 - (39 * Math.max(0, unsafeProgress)));
     }
 
     score = Math.max(10, Math.min(100, score));
@@ -120,6 +138,8 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
       maxAllowedEMI,
       actualCarEMI,
       downPaymentRequired: parseFloat(downPaymentRequired.toFixed(2)),
+      downPaymentAmount: parseFloat(safeDownPayment.toFixed(2)),
+      downPaymentPercent: parseFloat(downPaymentPercent.toFixed(1)),
       loanAmount: parseFloat(loanAmount.toFixed(2)),
       totalFixedCommitmentPercent,
       ruleChecks: {
@@ -188,7 +208,7 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
               {carName ? `Candor Shield: ${carName}` : 'Candor Financial Shield'}
             </h2>
             <p className="text-xs text-zinc-400 font-sans font-normal">
-              Evaluate car affordability using the industry-proven 20/4/10 rule.
+              Evaluate car affordability using the industry-proven 20/4/10 rule with custom down payment.
             </p>
           </div>
         </div>
@@ -304,7 +324,7 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
               <input 
                 type="number" 
                 value={carPriceLakhs} 
-                onChange={(e) => setCarPriceLakhs(Number(e.target.value))}
+                onChange={(e) => handleCarPriceChange(Number(e.target.value))}
                 className="bg-transparent border-none outline-none text-zinc-100 font-mono text-sm w-full focus:ring-0 p-0"
                 step="0.1"
               />
@@ -316,13 +336,72 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
               max={70} 
               step={0.5}
               value={carPriceLakhs} 
-              onChange={(e) => setCarPriceLakhs(Number(e.target.value))}
+              onChange={(e) => handleCarPriceChange(Number(e.target.value))}
               className="w-full h-1 bg-zinc-800 rounded appearance-none cursor-pointer accent-brand-blue mt-2"
             />
             <div className="flex justify-between text-[9px] text-zinc-500 font-mono font-bold">
               <span>₹4 Lakhs</span>
               <span>₹35 Lakhs</span>
               <span>₹70 Lakhs</span>
+            </div>
+          </div>
+
+          {/* Down Payment Option Input */}
+          <div className="space-y-1 pt-2 border-t border-card-border">
+            <div className="flex justify-between items-center">
+              <label className="text-[11px] font-sans font-bold uppercase tracking-wider text-zinc-400">Down Payment (Lakhs)</label>
+              <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                results.ruleChecks.downPaymentMet 
+                  ? 'text-emerald-400 bg-emerald-500/10' 
+                  : 'text-amber-400 bg-amber-500/10'
+              }`}>
+                {results.downPaymentPercent.toFixed(0)}% of Price
+              </span>
+            </div>
+            <div className="bg-zinc-900 border border-zinc-800 focus-within:border-brand-blue rounded-md p-3 flex items-center justify-between transition-colors">
+              <span className="text-zinc-400 font-mono text-sm mr-2">₹</span>
+              <input 
+                type="number" 
+                value={downPaymentLakhs} 
+                onChange={(e) => setDownPaymentLakhs(Math.max(0, Math.min(carPriceLakhs, Number(e.target.value))))}
+                className="bg-transparent border-none outline-none text-zinc-100 font-mono text-sm w-full focus:ring-0 p-0"
+                step="0.1"
+                min={0}
+                max={carPriceLakhs}
+              />
+              <span className="text-[10px] text-zinc-500 font-sans uppercase">Lakhs</span>
+            </div>
+            <input 
+              type="range" 
+              min={0} 
+              max={carPriceLakhs} 
+              step={0.1}
+              value={Math.min(downPaymentLakhs, carPriceLakhs)} 
+              onChange={(e) => setDownPaymentLakhs(Number(e.target.value))}
+              className="w-full h-1 bg-zinc-800 rounded appearance-none cursor-pointer accent-brand-blue mt-2"
+            />
+            <div className="flex justify-between text-[9px] text-zinc-500 font-mono font-bold mt-1">
+              <span>₹0 (0%)</span>
+              <span>₹{(carPriceLakhs * 0.20).toFixed(1)}L (20%)</span>
+              <span>₹{(carPriceLakhs * 0.50).toFixed(1)}L (50%)</span>
+            </div>
+            {/* Preset buttons */}
+            <div className="flex items-center gap-1.5 pt-2">
+              <span className="text-[10px] text-zinc-500 font-mono">Quick Preset:</span>
+              {[10, 20, 30, 50].map((pct) => (
+                <button
+                  key={pct}
+                  type="button"
+                  onClick={() => setDownPaymentLakhs(Number(((pct / 100) * carPriceLakhs).toFixed(2)))}
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border transition-colors ${
+                    Math.abs(results.downPaymentPercent - pct) < 1.5
+                      ? 'bg-brand-blue/20 border-brand-blue text-brand-blue'
+                      : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                  }`}
+                >
+                  {pct}%
+                </button>
+              ))}
             </div>
           </div>
 
@@ -425,11 +504,16 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
                   
                   {/* Axis 1: Down Payment */}
                   <li className="flex items-start gap-2.5">
-                    <span className="shrink-0 mt-0.5 text-base select-none">✅</span>
+                    <span className="shrink-0 mt-0.5 text-base select-none">
+                      {results.ruleChecks.downPaymentMet ? '✅' : '⚠️'}
+                    </span>
                     <div className="space-y-0.5">
-                      <span className="font-bold text-zinc-200 block">Down Payment Axis (20%)</span>
+                      <span className="font-bold text-zinc-200 block">Down Payment Axis (20% Rule Benchmark)</span>
                       <span className="text-zinc-400 font-sans leading-normal block">
-                        Healthy checkup. Minimum 20% down payment of ₹{results.downPaymentRequired.toFixed(1)}L is locked on the ₹{carPriceLakhs.toFixed(1)}L purchase.
+                        {results.ruleChecks.downPaymentMet
+                          ? `Healthy checkup. Down payment of ₹${results.downPaymentAmount.toFixed(2)}L (${results.downPaymentPercent.toFixed(0)}%) meets or exceeds the recommended 20% benchmark (₹${results.downPaymentRequired.toFixed(2)}L).`
+                          : `Caution. Down payment of ₹${results.downPaymentAmount.toFixed(2)}L (${results.downPaymentPercent.toFixed(0)}%) is below the recommended 20% benchmark (₹${results.downPaymentRequired.toFixed(2)}L). A lower down payment increases loan principal (₹${results.loanAmount.toFixed(2)}L) and monthly interest.`
+                        }
                       </span>
                     </div>
                   </li>
@@ -475,25 +559,32 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
           </div>
 
           {/* Pricing breakdowns details */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-card-border">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-card-border">
             
-            <div className="bg-card-bg p-4 rounded-md border border-card-border text-center shadow-sm">
-              <span className="block text-[9px] text-zinc-400 font-sans font-bold uppercase tracking-wider">Max Recommended Car</span>
-              <span className="block text-base font-mono font-bold text-zinc-100 mt-1">
-                ₹{results.maxCarPrice.toFixed(1)}L
+            <div className="bg-card-bg p-3 rounded-md border border-card-border text-center shadow-sm">
+              <span className="block text-[9px] text-zinc-400 font-sans font-bold uppercase tracking-wider">Target Car Price</span>
+              <span className="block text-sm font-mono font-bold text-zinc-100 mt-1">
+                ₹{carPriceLakhs.toFixed(1)}L
               </span>
             </div>
 
-            <div className="bg-card-bg p-4 rounded-md border border-card-border text-center shadow-sm">
-              <span className="block text-[9px] text-zinc-400 font-sans font-bold uppercase tracking-wider">Required Down Payment</span>
-              <span className="block text-base font-mono font-bold text-zinc-100 mt-1">
-                ₹{results.downPaymentRequired.toFixed(1)}L
+            <div className="bg-card-bg p-3 rounded-md border border-card-border text-center shadow-sm">
+              <span className="block text-[9px] text-zinc-400 font-sans font-bold uppercase tracking-wider">Down Payment</span>
+              <span className="block text-sm font-mono font-bold text-emerald-400 mt-1">
+                ₹{results.downPaymentAmount.toFixed(1)}L ({results.downPaymentPercent.toFixed(0)}%)
               </span>
             </div>
 
-            <div className="bg-card-bg p-4 rounded-md border border-card-border text-center shadow-sm">
+            <div className="bg-card-bg p-3 rounded-md border border-card-border text-center shadow-sm">
+              <span className="block text-[9px] text-zinc-400 font-sans font-bold uppercase tracking-wider">Net Loan Amount</span>
+              <span className="block text-sm font-mono font-bold text-brand-blue mt-1">
+                ₹{results.loanAmount.toFixed(1)}L
+              </span>
+            </div>
+
+            <div className="bg-card-bg p-3 rounded-md border border-card-border text-center shadow-sm">
               <span className="block text-[9px] text-zinc-400 font-sans font-bold uppercase tracking-wider">Estimated Monthly EMI</span>
-              <span className="block text-base font-mono font-bold text-zinc-100 mt-1">
+              <span className="block text-sm font-mono font-bold text-zinc-100 mt-1">
                 ₹{results.actualCarEMI.toLocaleString('en-IN')}
               </span>
             </div>

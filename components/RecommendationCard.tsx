@@ -12,6 +12,7 @@ interface RecommendationCardProps {
   onGenerateKit: (carName: string) => void;
   onShowFinancialShield?: (carName: string) => void;
   bodyType?: string;
+  dbImage?: string | null;
 }
 
 export default function RecommendationCard({ 
@@ -20,7 +21,8 @@ export default function RecommendationCard({
   affordabilityStatus, 
   onGenerateKit, 
   onShowFinancialShield,
-  bodyType
+  bodyType,
+  dbImage
 }: RecommendationCardProps) {
   const score = car.score;
   const radius = 30;
@@ -98,7 +100,7 @@ export default function RecommendationCard({
       {/* Car Image Trim Visualizer */}
       <div className="my-4 relative rounded-lg overflow-hidden border border-zinc-800 bg-zinc-950/60 aspect-[16/9] flex items-center justify-center group shadow-inner">
         <img 
-          src={getCarActualImage(car.name)} 
+          src={getCarActualImage(car.name, dbImage)} 
           alt={car.name} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 select-none"
           referrerPolicy="no-referrer"
@@ -106,14 +108,17 @@ export default function RecommendationCard({
             const target = e.target as HTMLImageElement;
             if (!target.dataset.triedRaw) {
               target.dataset.triedRaw = 'true';
-              target.src = getCarRawUrl(car.name);
-            } else {
+              target.src = getCarRawUrl(car.name, dbImage);
+            } else if (!target.dataset.triedFallback) {
+              target.dataset.triedFallback = 'true';
               switch (bodyType?.toLowerCase()) {
-                case 'sedan': target.src = 'https://upload.wikimedia.org/wikipedia/commons/c/ca/2022_Honda_City_ZX_i-VTEC_%28India%29_front_view.jpg'; break;
-                case 'hatchback': target.src = 'https://upload.wikimedia.org/wikipedia/commons/e/ec/2018_Suzuki_Swift_SZ5_Boosterjet_SHVS_1.0_Front.jpg'; break;
-                case 'mpv': target.src = 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Suzuki_Ertiga%2C_MPV_front_view.jpg'; break;
-                default: target.src = 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Tata_Nexon_XM.jpg';
+                case 'sedan': target.src = 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80'; break;
+                case 'hatchback': target.src = 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80'; break;
+                case 'mpv': target.src = 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80'; break;
+                default: target.src = 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80';
               }
+            } else {
+              target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%2318181b"/><text x="50" y="55" fill="%23a1a1aa" font-family="monospace" font-size="8" text-anchor="middle" letter-spacing="1">PREVIEW BLOCKED</text></svg>';
             }
           }}
         />

@@ -19,6 +19,7 @@ export interface Car {
   safety_rating: number;
   transmission: string;
   description: string;
+  image?: string | null;
 }
 
 export interface RecommendedCar {

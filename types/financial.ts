@@ -17,7 +17,9 @@ export interface AffordabilityResult {
   maxCarPrice: number; // in Lakhs
   maxAllowedEMI: number; // in Rs
   actualCarEMI: number; // in Rs
-  downPaymentRequired: number; // in Lakhs
+  downPaymentRequired: number; // in Lakhs (minimum 20% benchmark)
+  downPaymentAmount: number; // in Lakhs (user selected/calculated down payment)
+  downPaymentPercent: number; // percentage of car price (e.g. 20)
   loanAmount: number; // in Lakhs
   totalFixedCommitmentPercent: number; // (fixedExpenses + actualEMI) / monthlySalary * 100
   ruleChecks: RuleCheckDetails;

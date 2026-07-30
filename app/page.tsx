@@ -52,6 +52,7 @@ export default function Home() {
   const [activeCarForShield, setActiveCarForShield] = useState<{ name: string; price: number } | null>(null);
   const [monthlySalary, setMonthlySalary] = useState<number>(120000);
   const [monthlyFixedExpenses, setMonthlyFixedExpenses] = useState<number>(45000);
+  const [downPaymentPercent, setDownPaymentPercent] = useState<number>(20);
   const [hasEnteredFinancials, setHasEnteredFinancials] = useState<boolean>(false);
   const [allCars, setAllCars] = useState<Car[]>([]);
   const [showResultsShield, setShowResultsShield] = useState<boolean>(false);
@@ -197,7 +198,8 @@ export default function Home() {
     if (!car) return undefined;
 
     const carPriceLakhs = car.price_min;
-    const loanAmount = carPriceLakhs * 0.80;
+    const downPaymentLakhs = (carPriceLakhs * downPaymentPercent) / 100;
+    const loanAmount = Math.max(0, carPriceLakhs - downPaymentLakhs);
     const interestRate = 8.75; // SBI default
     const tenureMonths = 48;
 
@@ -215,8 +217,9 @@ export default function Home() {
     const maxAllowedEMI = monthlySalary * 0.10;
     const totalFixedCommitmentPercent = ((monthlyFixedExpenses + emi) / monthlySalary) * 100;
     const emiRatio = emi / maxAllowedEMI;
+    const downPaymentMet = downPaymentPercent >= 19.99;
 
-    if (emiRatio <= 1.0 && totalFixedCommitmentPercent <= 70) {
+    if (emiRatio <= 1.0 && totalFixedCommitmentPercent <= 70 && downPaymentMet) {
       return 'Safe';
     } else if (emiRatio <= 1.5 && totalFixedCommitmentPercent <= 85) {
       return 'Stretching';
@@ -232,7 +235,8 @@ export default function Home() {
     const maxAllowedEMI = Math.round(monthlySalary * 0.10);
     
     const downPaymentRequired = carPriceLakhs * 0.20;
-    const loanAmount = carPriceLakhs * 0.80;
+    const downPaymentLakhs = (carPriceLakhs * downPaymentPercent) / 100;
+    const loanAmount = Math.max(0, carPriceLakhs - downPaymentLakhs);
 
     const principal = loanAmount * 100000;
     const monthlyRate = (interestRate / 12) / 100;
@@ -249,27 +253,31 @@ export default function Home() {
     const totalCommitment = monthlyFixedExpenses + actualCarEMI;
     const totalFixedCommitmentPercent = parseFloat(((totalCommitment / monthlySalary) * 100).toFixed(1));
     const cashflowHealthy = totalFixedCommitmentPercent <= 70;
+    const downPaymentMet = downPaymentPercent >= 19.99;
 
     let status: 'Safe' | 'Stretching' | 'Unsafe' = 'Safe';
     let score = 95;
     const emiRatio = actualCarEMI / maxAllowedEMI;
 
-    if (emiRatio <= 1.0 && cashflowHealthy) {
+    if (emiRatio <= 1.0 && cashflowHealthy && downPaymentMet) {
       status = 'Safe';
       score = Math.round(100 - (15 * emiRatio));
     } else if (emiRatio <= 1.5 && totalFixedCommitmentPercent <= 85) {
       status = 'Stretching';
       const stretchingProgress = (emiRatio - 1.0) / 0.5;
-      score = Math.round(84 - (34 * stretchingProgress));
+      score = Math.round(84 - (34 * Math.max(0, stretchingProgress)));
+      if (!downPaymentMet) {
+        score = Math.max(50, score - 10);
+      }
     } else {
       status = 'Unsafe';
       const unsafeProgress = Math.min((emiRatio - 1.5) / 1.0, 1);
-      score = Math.round(49 - (39 * unsafeProgress));
+      score = Math.round(49 - (39 * Math.max(0, unsafeProgress)));
     }
 
     score = Math.max(10, Math.min(100, score));
 
-    return { score, status, actualCarEMI, maxAllowedEMI };
+    return { score, status, actualCarEMI, maxAllowedEMI, downPaymentLakhs };
   };
 
   const liveShield = getLiveAffordability();
@@ -465,6 +473,25 @@ export default function Home() {
                         className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded appearance-none cursor-pointer accent-brand-blue"
                       />
                     </div>
+
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[11px] font-bold text-zinc-900 dark:text-zinc-100">
+                        <span>Down Payment</span>
+                        <span className="text-brand-blue font-mono">{downPaymentPercent}%</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min={0} 
+                        max={60} 
+                        step={5}
+                        value={downPaymentPercent} 
+                        onChange={(e) => {
+                          setDownPaymentPercent(Number(e.target.value));
+                          setHasEnteredFinancials(true);
+                        }}
+                        className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded appearance-none cursor-pointer accent-brand-blue"
+                      />
+                    </div>
                   </div>
 
                   {/* Calculations Preview */}
@@ -540,24 +567,27 @@ export default function Home() {
                   {/* Dynamic Visual Preview of Selected Car Trim */}
                   <div className="relative rounded-md overflow-hidden border border-zinc-800 bg-zinc-950 aspect-[2/1] flex items-center justify-center transition-all duration-300">
                     <img 
-                      src={getCarActualImage(selectedCarForKit)} 
+                      src={getCarActualImage(selectedCarForKit, allCars.find(c => `${c.brand} ${c.name}` === selectedCarForKit || c.name === selectedCarForKit)?.image)} 
                       alt={selectedCarForKit} 
                       className="w-full h-full object-cover select-none"
                       referrerPolicy="no-referrer"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
+                        const matched = allCars.find(c => `${c.brand} ${c.name}` === selectedCarForKit || c.name === selectedCarForKit);
                         if (!target.dataset.triedRaw) {
                           target.dataset.triedRaw = 'true';
-                          target.src = getCarRawUrl(selectedCarForKit);
-                        } else {
-                          const matchedCar = allCars.find(c => `${c.brand} ${c.name}` === selectedCarForKit || c.name === selectedCarForKit);
-                          const type = matchedCar?.body_type || 'SUV';
+                          target.src = getCarRawUrl(selectedCarForKit, matched?.image);
+                        } else if (!target.dataset.triedFallback) {
+                          target.dataset.triedFallback = 'true';
+                          const type = matched?.body_type || 'SUV';
                           switch (type.toLowerCase()) {
-                            case 'sedan': target.src = 'https://upload.wikimedia.org/wikipedia/commons/c/ca/2022_Honda_City_ZX_i-VTEC_%28India%29_front_view.jpg'; break;
-                            case 'hatchback': target.src = 'https://upload.wikimedia.org/wikipedia/commons/e/ec/2018_Suzuki_Swift_SZ5_Boosterjet_SHVS_1.0_Front.jpg'; break;
-                            case 'mpv': target.src = 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Suzuki_Ertiga%2C_MPV_front_view.jpg'; break;
-                            default: target.src = 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Tata_Nexon_XM.jpg';
+                            case 'sedan': target.src = 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80'; break;
+                            case 'hatchback': target.src = 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80'; break;
+                            case 'mpv': target.src = 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80'; break;
+                            default: target.src = 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80';
                           }
+                        } else {
+                          target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%2318181b"/><text x="50" y="55" fill="%23a1a1aa" font-family="monospace" font-size="8" text-anchor="middle" letter-spacing="1">PREVIEW BLOCKED</text></svg>';
                         }
                       }}
                     />
@@ -832,6 +862,7 @@ export default function Home() {
                       rank={idx + 1}
                       affordabilityStatus={getCarAffordabilityStatus(car.name)}
                       bodyType={matchedCar?.body_type}
+                      dbImage={matchedCar?.image}
                       onGenerateKit={(carName) => setActiveCarNameForKit(carName)}
                       onShowFinancialShield={(carName) => {
                         const matchedCar = allCars.find(c => c.name.toLowerCase() === carName.toLowerCase() || `${c.brand} ${c.name}`.toLowerCase() === carName.toLowerCase());
@@ -879,7 +910,7 @@ export default function Home() {
                     Activate the Financial Shield to overlay live budget metrics (Safe, Stretching, Unsafe) onto each recommended car card. Financial calculations are processed locally inside your browser.
                   </p>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Monthly Take-Home Salary</label>
                       <div className="relative">
@@ -904,6 +935,22 @@ export default function Home() {
                           onChange={(e) => setMonthlyFixedExpenses(Number(e.target.value))}
                           className="w-full pl-7 p-2.5 border border-card-border rounded-md text-xs font-mono text-zinc-100 bg-zinc-950 focus:border-brand-blue focus:ring-1 focus:ring-brand-blue focus:outline-none"
                           placeholder="e.g. 45000"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Planned Down Payment (%)</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-3 text-zinc-400 text-xs font-bold">%</span>
+                        <input
+                          type="number"
+                          value={downPaymentPercent}
+                          onChange={(e) => setDownPaymentPercent(Math.max(0, Math.min(80, Number(e.target.value))))}
+                          className="w-full pl-7 p-2.5 border border-card-border rounded-md text-xs font-mono text-zinc-100 bg-zinc-950 focus:border-brand-blue focus:ring-1 focus:ring-brand-blue focus:outline-none"
+                          placeholder="e.g. 20"
+                          min={0}
+                          max={80}
                         />
                       </div>
                     </div>
@@ -986,7 +1033,10 @@ export default function Home() {
         {/* VIEW 5: STANDALONE FINANCIAL SHIELD */}
         {view === 'financial_shield' && (
           <div className="w-full max-w-4xl mx-auto py-6 animate-fade-in-up">
-            <FinancialShield onClose={() => setView('landing')} />
+            <FinancialShield 
+              onClose={() => setView('landing')} 
+              initialDownPaymentLakhs={(12 * downPaymentPercent) / 100}
+            />
           </div>
         )}
       </main>
@@ -1013,6 +1063,7 @@ export default function Home() {
               <FinancialShield
                 initialCarPriceLakhs={activeCarForShield.price}
                 carName={activeCarForShield.name}
+                initialDownPaymentLakhs={(activeCarForShield.price * downPaymentPercent) / 100}
                 onClose={() => setActiveCarForShield(null)}
               />
             </div>
