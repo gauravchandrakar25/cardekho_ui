@@ -112,10 +112,10 @@ export default function RecommendationCard({
             } else if (!target.dataset.triedFallback) {
               target.dataset.triedFallback = 'true';
               switch (bodyType?.toLowerCase()) {
-                case 'sedan': target.src = 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80'; break;
-                case 'hatchback': target.src = 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80'; break;
-                case 'mpv': target.src = 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80'; break;
-                default: target.src = 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80';
+                case 'sedan': target.src = '/images/cars/city.jpg'; break;
+                case 'hatchback': target.src = '/images/cars/swift.jpg'; break;
+                case 'mpv': target.src = '/images/cars/innova_hycross.jpg'; break;
+                default: target.src = '/images/cars/nexon.jpg';
               }
             } else {
               target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%2318181b"/><text x="50" y="55" fill="%23a1a1aa" font-family="monospace" font-size="8" text-anchor="middle" letter-spacing="1">PREVIEW BLOCKED</text></svg>';

@@ -157,16 +157,16 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                     key={opt.label}
                     type="button"
                     onClick={() => updatePreference('budget', opt.label)}
-                    className={`flex items-center justify-between text-left p-4.5 rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer ${
+                    className={`flex items-center justify-between text-left p-4.5 rounded-xl border transition-all duration-300 hover:scale-[1.01] cursor-pointer ${
                       isLast ? 'md:col-span-2' : ''
                     } ${
                       isSelected 
-                        ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
-                        : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
+                        ? 'border-brand-blue bg-brand-blue/10 text-fg-main shadow-md shadow-brand-blue/10' 
+                        : 'border-card-border hover:border-brand-blue/50 bg-card-bg text-fg-main shadow-xs'
                     }`}
                   >
                     <div className="flex items-center gap-3.5">
-                      <div className={`p-2.5 rounded-lg transition-colors duration-300 ${isSelected ? 'bg-brand-blue text-zinc-950' : 'bg-zinc-900 border border-zinc-800 text-zinc-400'}`}>
+                      <div className={`p-2.5 rounded-lg transition-colors duration-300 ${isSelected ? 'bg-brand-blue text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400'}`}>
                         <IndianRupee className="w-5 h-5" />
                       </div>
                       <div>
@@ -200,10 +200,10 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                       key={opt.label}
                       type="button"
                       onClick={() => updatePreference('familySize', opt.label)}
-                      className={`text-left p-5 rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer ${
+                      className={`text-left p-5 rounded-xl border transition-all duration-300 hover:scale-[1.01] cursor-pointer ${
                         isSelected 
-                          ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
-                          : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
+                          ? 'border-brand-blue bg-brand-blue/10 text-fg-main shadow-md shadow-brand-blue/10' 
+                          : 'border-card-border hover:border-brand-blue/50 bg-card-bg text-fg-main shadow-xs'
                       }`}
                     >
                       <opt.icon className={`w-6 h-6 mb-3 transition-colors duration-300 ${isSelected ? 'text-brand-blue' : 'text-zinc-400'}`} />
@@ -226,10 +226,10 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                       key={opt.label}
                       type="button"
                       onClick={() => updatePreference('primaryUsage', opt.label)}
-                      className={`text-left p-5 rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer ${
+                      className={`text-left p-5 rounded-xl border transition-all duration-300 hover:scale-[1.01] cursor-pointer ${
                         isSelected 
-                          ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
-                          : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
+                          ? 'border-brand-blue bg-brand-blue/10 text-fg-main shadow-md shadow-brand-blue/10' 
+                          : 'border-card-border hover:border-brand-blue/50 bg-card-bg text-fg-main shadow-xs'
                       }`}
                     >
                       <opt.icon className={`w-6 h-6 mb-3 transition-colors duration-300 ${isSelected ? 'text-brand-blue' : 'text-zinc-400'}`} />
@@ -257,10 +257,10 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                       key={opt.label}
                       type="button"
                       onClick={() => updatePreference('fuelPreference', opt.label)}
-                      className={`text-center p-4 rounded-xl border transition-all duration-300 flex flex-col items-center justify-center hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer min-h-[80px] ${
+                      className={`text-center p-4 rounded-xl border transition-all duration-300 flex flex-col items-center justify-center hover:scale-[1.01] cursor-pointer min-h-[80px] ${
                         isSelected 
-                          ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
-                          : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
+                          ? 'border-brand-blue bg-brand-blue/10 text-fg-main shadow-md shadow-brand-blue/10' 
+                          : 'border-card-border hover:border-brand-blue/50 bg-card-bg text-fg-main shadow-xs'
                       }`}
                     >
                       <span className="font-display font-semibold text-zinc-100 text-xs md:text-sm">{opt.label}</span>
@@ -282,10 +282,10 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                       key={opt.label}
                       type="button"
                       onClick={() => updatePreference('bodyType', opt.label)}
-                      className={`text-center p-4 rounded-xl border transition-all duration-300 flex flex-col items-center justify-center hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer min-h-[80px] ${
+                      className={`text-center p-4 rounded-xl border transition-all duration-300 flex flex-col items-center justify-center hover:scale-[1.01] cursor-pointer min-h-[80px] ${
                         isSelected 
-                          ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
-                          : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
+                          ? 'border-brand-blue bg-brand-blue/10 text-fg-main shadow-md shadow-brand-blue/10' 
+                          : 'border-card-border hover:border-brand-blue/50 bg-card-bg text-fg-main shadow-xs'
                       }`}
                     >
                       <span className="font-display font-semibold text-zinc-100 text-xs md:text-sm">{opt.label}</span>
@@ -314,10 +314,10 @@ export default function QuestionForm({ onSubmit, isLoading }: QuestionFormProps)
                     key={opt.label}
                     type="button"
                     onClick={() => updatePreference('topPriority', opt.label)}
-                    className={`flex items-start text-left p-4.5 rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:bg-zinc-900/40 cursor-pointer ${
+                    className={`flex items-start text-left p-4.5 rounded-xl border transition-all duration-300 hover:scale-[1.01] cursor-pointer ${
                       isSelected 
-                        ? 'border-brand-blue bg-brand-blue-light/10 text-fg-main shadow-lg shadow-brand-blue/5' 
-                        : 'border-card-border hover:border-brand-blue/30 bg-zinc-950/40 text-fg-main'
+                        ? 'border-brand-blue bg-brand-blue/10 text-fg-main shadow-md shadow-brand-blue/10' 
+                        : 'border-card-border hover:border-brand-blue/50 bg-card-bg text-fg-main shadow-xs'
                     }`}
                   >
                     <div className={`p-2.5 rounded-lg mr-3.5 transition-colors duration-300 shrink-0 ${opt.color}`}>

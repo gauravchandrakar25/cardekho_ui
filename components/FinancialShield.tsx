@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BankRate, AffordabilityResult } from '../types/financial';
+import SearchableSelect from './SearchableSelect';
 import { 
   ShieldCheck, 
   HelpCircle, 
@@ -212,15 +213,6 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
             </p>
           </div>
         </div>
-        
-        {onClose && (
-          <button 
-            onClick={onClose}
-            className="btn-secondary text-xs px-3.5 py-2 rounded-md hover:scale-[1.01] active:scale-[0.99]"
-          >
-            Close
-          </button>
-        )}
       </div>
 
       {/* Local Privacy Disclaimer Badge */}
@@ -301,19 +293,16 @@ export default function FinancialShield({ initialCarPriceLakhs, carName, onClose
           {/* Bank Rates Dropdown */}
           <div className="space-y-1">
             <label className="text-[11px] font-sans font-bold uppercase tracking-wider text-zinc-400 block">Loan Interest Rate</label>
-            <div className="bg-zinc-900 border border-zinc-800 focus-within:border-brand-blue rounded-md p-1.5 transition-colors">
-              <select
-                value={selectedBankId}
-                onChange={(e) => setSelectedBankId(e.target.value)}
-                className="w-full p-2 text-xs font-mono bg-transparent text-zinc-100 focus:outline-none border-none outline-none cursor-pointer"
-              >
-                {bankRates.map(bank => (
-                  <option key={bank.id} value={bank.id} className="bg-zinc-900 text-zinc-100">
-                    {bank.name} — {bank.rate}% p.a.
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SearchableSelect
+              options={bankRates.map((bank) => ({
+                value: bank.id,
+                label: `${bank.name} — ${bank.rate}% p.a.`,
+                sublabel: `${bank.rate}% annual interest rate`,
+              }))}
+              value={selectedBankId}
+              onChange={(val) => setSelectedBankId(val)}
+              searchPlaceholder="Search bank or interest rate..."
+            />
           </div>
 
           {/* Target Car Price Input */}
